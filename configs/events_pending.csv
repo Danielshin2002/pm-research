@@ -1,0 +1,4 @@
+race_id,status,source_url,notes
+2024-DE-class1-general,needs_call_time,https://apnews.com/article/5464ee00ac7e49968fee745be6c653cf,AP alert publication found; explicit call time not verified
+2024-HI-class1-general,needs_call_time,https://apnews.com/article/db9449f74d364ad392c09198f48a7539,AP alert publication found; explicit call time not verified
+2024-UT-class1-general,needs_primary_confirmation,https://apnews.com/article/b4a104c422e74c09b5c1cf785ea37d57,Third-party mirror of AP tweet states 10pm EST Nov 5; direct call-time confirmation still needed

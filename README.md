@@ -26,7 +26,8 @@ data contracts in [docs/schema.md](docs/schema.md).
 
 The full fitted hierarchical model, polling/census enrichment, clustered regression,
 cross-cycle validation and publication plots are later research phases. No empirical
-Senate results or race-call timestamps are bundled or inferred from terminal prices.
+results are inferred from terminal prices. A partially curated 2024 AP-call dataset
+is included; see [event provenance and remaining gaps](docs/event_review.md).
 
 ## Setup and offline demonstration
 
@@ -66,7 +67,12 @@ slug additions. Exit status 2 means pagination stopped at `--max-pages`: a parti
 catalog is still saved and clearly marked. An exhausted filtered scan does not
 establish full Senate coverage.
 
-Prepare your own `configs/races.csv` using [the template](configs/races.template.csv).
+`configs/races.csv` now contains 34 reviewed 2024 mappings from the local catalog.
+See [mapping decisions and caveats](docs/race_mapping_review.md). For the current
+single-election-type Bayesian reference, pair `configs/races_2024_general.csv`
+with `configs/events_2024_general.csv` when building events (33 regular elections,
+excluding Nebraska's special election; 30 calls currently sourced).
+For other cycles, prepare a mapping using [the template](configs/races.template.csv).
 Choose one token per race and explicitly map its probability to a **Democratic win**.
 `identity` keeps the token price; `complement` uses `1 - price`. The latter is valid
 only if the token is exactly the complement of the defined Democratic-win event.
@@ -107,7 +113,9 @@ normalized outputs at the same path are replaced. Downloads and outputs are giti
 
 ## 3. Curate calls and construct batches
 
-Create `configs/events.csv` from [the event template](configs/events.template.csv).
+`configs/events.csv` contains 31 sourced 2024 AP calls; three call times remain
+pending in `configs/events_pending.csv`. See [the event review](docs/event_review.md)
+before interpreting outputs. For another cycle, use [the event template](configs/events.template.csv).
 Use a timestamped reporting source for calls and official results for outcomes/margins.
 Keep poll close, first returns, race call and market settlement as separate records.
 Every timestamp must carry a timezone; all are converted to UTC. Date-only events
@@ -128,6 +136,27 @@ cycles or election types. Missing call times are reported as unsequenced races.
 For a target with no known-result timestamp, supply a sourced, reviewed
 `unresolved_through` time in its race mapping; otherwise the panel excludes it
 because missing metadata does not establish that it was unresolved.
+
+## Offline price-history audit
+
+Before interpreting the panel, generate plots and review flags for the mapped tokens:
+
+```sh
+uv run python scripts/audit_history.py --events data/processed/events_2024.json \
+  --history-dir data/interim/history_2024 --output-dir outputs/history_audit_2024
+open outputs/history_audit_2024/index.html
+```
+
+The self-contained HTML report requires no plotting libraries or internet connection.
+It plots contract-oriented Democratic-win probabilities with AP-call markers and
+reports calls outside each observed span. `audit.json` contains all detected changes,
+flat stretches, gaps and input hashes. Available coverage-manifest hashes are checked.
+Default review thresholds are adjacent changes of at least 10 percentage points,
+identical samples lasting at least 60 minutes, and sampling gaps over 120 seconds.
+Override with `--jump`, `--flat-minutes`, and `--gap-seconds`. These flags are not
+automatic exclusions or evidence of erroneous data. Long gaps break both plotted
+lines and flat-stretch detection. Outputs at the selected output directory are replaced
+on rerun; source histories, mappings and panels are never changed.
 
 ## 4. Construct descriptive responses and the reference posterior
 
