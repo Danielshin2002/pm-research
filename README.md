@@ -137,6 +137,28 @@ For a target with no known-result timestamp, supply a sourced, reviewed
 `unresolved_through` time in its race mapping; otherwise the panel excludes it
 because missing metadata does not establish that it was unresolved.
 
+## Compare model updates with market changes
+
+After building the general-election panel and posterior, run:
+
+```sh
+uv run python scripts/compare_model_market.py \
+  --panel outputs/panel_2024_general.json --posterior outputs/posterior_2024.json \
+  --output-dir outputs/comparison_2024
+```
+
+Read `summary.md` for per-horizon errors, `responses.csv` for matched observations,
+and `comparison.json` for full results and provenance. Rerunning replaces these
+reports, not their source inputs. The comparison requires matching event and history
+hashes; batch IDs alone cannot safely match separate runs.
+
+Model changes use the preceding posterior (or the frozen prior for the first batch),
+not the last batch that happened to survive panel exclusions. Current-batch results
+are available only at batch end. The zero-change benchmark predicts no market price
+movement. MAE is in percentage points, not a Brier score against election outcomes.
+Repeated races/batches are dependent observations. This is a descriptive diagnostic,
+not out-of-sample validation, a fitted time-decay model, or a causal estimate.
+
 ## Offline price-history audit
 
 Before interpreting the panel, generate plots and review flags for the mapped tokens:
