@@ -1,0 +1,14 @@
+# UTC is required on all timestamp inputs. Fidelity is in minutes.
+[history]
+fidelity_minutes = 60
+chunk_days = 7
+
+[events]
+batch_minutes = 5
+allow_resolution_fallback = false
+
+[event_study]
+windows_minutes = [5, 30, 60, 360, 1440]
+max_age_seconds = 120
+contamination_minutes = 5
+exclude_contaminated = true
